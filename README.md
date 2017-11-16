@@ -20,13 +20,11 @@ app.xml
         <title></title>
     </header>
     <body>
-        <box id="box1">
             <label 
             id="lbl1" color="red" 
                 onclick="lbl1_clicked()">
                 Hello world!
-            </label>
-        </box>        
+            </label>        
     </body>
 </window>
 
@@ -40,7 +38,7 @@ def lbl1_clicked():
 def fill():
     content = _.get("http://example.com/content")
     for item in content:
-        _("#box1").append(Label(item["name"]))
+        _("body").append(Label(item["name"]))
 ```
 
 Further features to be implemented(later)
