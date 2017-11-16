@@ -1,0 +1,10 @@
+#Docs(temp.)
+docs/*
+
+#Examples in root dir
+example*
+
+#Compiled
+*__pycache__
+*.pyc
+
