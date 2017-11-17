@@ -41,6 +41,12 @@ def fill():
         _("body").append(Label(item["name"]))
 ```
 
+----------------------
+
+Working example:
+<img src="https://github.com/ThomasKenyeres/GTKML-GTK-Markup-Language-/blob/baf20268f5dabac5528b9ed19cd6f762c21b2afb/img/gtkml-labels.png">
+
+
 Further features to be implemented(later)
 * Full CSS support
 * Python snippets in DOM
