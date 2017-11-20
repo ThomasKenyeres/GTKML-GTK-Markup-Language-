@@ -1,6 +1,8 @@
-from gtkml.gtkml_runtime.execute.executor import Executor
-from gtkml.gtkml_runtime.object_pool import ObjectPool
+from gtkml.runtime.execute.executor import Executor
+from gtkml.runtime.object_pool import ObjectPool
 from gtkml.parser.parser import DOMParser
+
+from gtkml.runtime.execute.executor import VAR
 
 class GtkmlRuntime:
     def __init__(self):
@@ -28,7 +30,11 @@ class GtkmlRuntime:
         self._execute(root)
 
     def run(self, start_file):
-        self._read(start_file)
+        if os.path.isfile(start_file):
+            directory = os.path.dirname(start_file)
+            VAR.START_FILE = start_file
+            VAR.START_DIR = directory
+            self._read(start_file)
 
 
 
