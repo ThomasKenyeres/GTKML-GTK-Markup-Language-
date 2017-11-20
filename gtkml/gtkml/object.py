@@ -67,15 +67,24 @@ class AbsLayoutWidget(AbsWidget):
         super()
         self.__content = []
 
+    @property
+    def children(self):
+        return REF(self.__dict__, "_AbsLayoutWidget__content")
+
+    @children.setter
+    def children(self, val):
+        self.__content = val
+
     def append(self, child):
-        pass
+        self.__content.append(child)
 
 class AbsWindow(AbsWidget):
     def __init__(self):
         super()
         self.__header = None
         self.__body = None
-        self.__title
+        self.__title = None
+        self.__menu = None
 
     @property
     def title(self):
@@ -85,16 +94,27 @@ class AbsWindow(AbsWidget):
     def title(self, val):
         self.__title = val
 
+    @property
+    def menu(self):
+        return REF(self.__dict__, "_AbsWindow__menu")
+
+    @menu.setter
+    def menu(self, val):
+        self.__menu = val
+
+    @property
+    def body(self):
+        return REF(self.__dict__, "_AbsWindow__body")
+
+    @body.setter
+    def body(self, val):
+        self.__body = val
+
 
 class AbsHeader(AbsLayoutWidget):
     def __init__(self):
         super()
         self.__title = ""
-
-class AbsBody(AbsLayoutWidget):
-    def __init__(self):
-        super()
-
 
 
 class AbsPython(GtkmlObject):
@@ -129,6 +149,12 @@ class AbsVBox(AbsBox):
 class AbsHBox(AbsBox):
     pass
 
+#!BODY!
+class AbsBody(AbsHBox):
+    def __init__(self):
+        super()
+
+
 
 class AbsGrid(AbsLayoutWidget):
     def __init__(self):
@@ -148,6 +174,7 @@ class AbsFixed(AbsLayoutWidget):
 
 class AbsLayout(AbsLayoutWidget):
     pass
+
 
 
 
@@ -177,6 +204,15 @@ class AbsProgressBar(AbsDisplayWidget):
 class AbsButtonWidget(AbsWidget, abstr.TextedWidget):
     def __init__(self):
         super()
+        self.__onclick = None
+
+    @property
+    def onclick(self):
+        return REF(self.__dict__, "_AbsButtonWidget__onclick")
+
+    @onclick.setter
+    def onclick(self, val):
+        self.__onclick = val
 
 
 #BUTTONS
@@ -270,6 +306,16 @@ class AbsSimpleListView(AbsListView):
 class AbsMenu(AbsWidget):
     def __init__(self):
         pass
+
+
+class AbsAppmenu(AbsWidget):
+    pass
+
+class AbsAppSubmenu(AbsWidget):
+    pass
+
+class AbsAppmenuItem(AbsWidget):
+    pass
 
 
 #################

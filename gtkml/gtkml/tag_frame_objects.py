@@ -1,5 +1,10 @@
 import gi
 gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+
+from gtkml.tools.frame_object_tools import is_layout_widget
+
+
 #from gi.repository import Gdk, Gtk, Gio
 
 import gtkml.gtkml.object as GO
@@ -10,6 +15,12 @@ class Widget(GO.AbsWidget):
     def __init__(self):
         super()
 
+    def show(self):
+        self.value.show_all()
+
+    def hide(self):
+        self.value.hide()
+
 class Application(GO.AbsApplication):
     def __init__(self):
         super()
@@ -17,25 +28,27 @@ class Application(GO.AbsApplication):
     def run(self):
         for component in self.components:
             if isinstance(component, Window):
-                #if component.visible:
-                    #component.show()
                 component.show()
 
 class LayoutWidget(GO.AbsLayoutWidget):
     def __init__(self):
         super()
-        self.__content = []
 
     @property
     def children(self):
-        return REF(self.__dict__, "_" + str(self.__class__.__name__) + "__content")
+        super()
+        pass
 
     @children.setter
     def children(self, val):
-        self.__content = val
+        super()
+        pass
 
     def append(self, child):
-        self.__content.append(child)
+        super()
+        pass
+
+
 
 class Window(GO.AbsWindow):
     def __init__(self):
@@ -45,17 +58,13 @@ class Window(GO.AbsWindow):
         self.__body = None
 
     def show(self):
-        self.value.show_all()
+        if not "_AbsWidget__visible" in self.__dict__:
+            self.value.show_all()
 
 class Header(GO.AbsHeader):
     def __init__(self):
         super()
         self.__title = ""
-
-class Body(GO.AbsBody):
-    def __init__(self):
-        super()
-
 
 
 class Python(GO.AbsPython):
@@ -75,6 +84,16 @@ class VBox(GO.AbsVBox):
 
 class HBox(GO.AbsHBox):
     pass
+
+
+#!BODY!
+class Body(GO.AbsBody):
+    def __init__(self):
+        super()
+
+
+
+
 
 class Grid(GO.AbsGrid):
     def __init__(self):
@@ -196,6 +215,19 @@ class SimpleListView(GO.AbsSimpleListView):
 #MENUS
 class Menu(GO.AbsMenu):
     pass
+
+
+
+class AppMenu(GO.AbsAppmenu):
+    def __init__(self):
+        pass
+
+class AppSubMenu(GO.AbsAppSubmenu):
+    pass
+
+class AppMenuItem(GO.AbsAppmenuItem):
+    pass
+
 
 
 ##CONTROL########################
