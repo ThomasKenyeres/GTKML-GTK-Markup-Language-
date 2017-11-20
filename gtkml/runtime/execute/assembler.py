@@ -9,10 +9,10 @@ from gi.repository import Gtk
 import gtkml.gtkml.tag_frame_objects as OBJ
 from gtkml.gtkml.tag import Tag
 
-import gtkml.gtkml_runtime.execute.assembly_tools.glob as GLOB
+import gtkml.runtime.execute.assembly_tools.glob as GLOB
 import gtkml.gtkml.static.names as NAMES
 
-import gtkml.gtkml_runtime.runtime_variables as VAR
+import gtkml.runtime.runtime_variables as VAR
 
 class ObjectAssembler:
     def __init__(self):
@@ -34,6 +34,10 @@ class ObjectAssembler:
         if name == "button": return self._get_button(tag)
         if name == "entry": return self._get_entry(tag)
 
+        if name == "appmenu": return self._get_appmenu(tag)
+        if name == "submenu": return self._get_submenu(tag)
+        if name == "menu-item": return self._get_menu_item(tag)
+
     def _get_application(self, tag):
         name = GLOB.get_attribute(tag, "name")
 
@@ -51,7 +55,8 @@ class ObjectAssembler:
         return app
 
     def _get_python(self, tag):
-        print("PYTHON")
+        #print("PYTHON")
+        pass
 
     def _get_window(self, tag):
         title = GLOB.get_attribute(tag, "title")
@@ -78,7 +83,9 @@ class ObjectAssembler:
                 elif component.name == "body":
                     window.body = self._get_body(component)
                     window.value.add(window.body.value)
-                    print(window.body.value)
+                    #print(window.body.value)
+                elif component.name == "appmenu":
+                    window.value.add(self.get_object(component).value)
 
         if title is not None: win.set_title(title)
         else: win.set_title("")
@@ -103,10 +110,14 @@ class ObjectAssembler:
             if isinstance(widget_tag, Tag):
                 obj = self.get_object(widget_tag)
                 if widget_tag.name in NAMES.WIDGETS:
-                    print(">>>" + str(widget_tag.name))
+                    #print(">>>" + str(widget_tag.name))
                     body.value.pack_start(obj.value, expand=True, fill=True, padding=0)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     body.append(obj)
+                elif widget_tag.name == "appmenu":
+                    body.value.pack_start(obj.value, expand=False, fill=True, padding=0)
+                    #print("OBJ: " + str(obj))
+                    pass
         return body
 
     def _get_hbox(self, tag):
@@ -118,7 +129,7 @@ class ObjectAssembler:
             if isinstance(widget_tag, Tag):
                 obj = self.get_object(widget_tag)
                 if widget_tag.name in NAMES.WIDGETS:
-                    print(">>>" + str(widget_tag.name))
+                    #print(">>>" + str(widget_tag.name))
                     hbox.value.pack_start(obj.value, expand=True, fill=True, padding=0)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     hbox.append(obj)
@@ -131,7 +142,7 @@ class ObjectAssembler:
 
         for widget_tag in tag.children:
             if isinstance(widget_tag, Tag):
-                print(">>>" + str(widget_tag.name))
+                #print(">>>" + str(widget_tag.name))
                 obj = self.get_object(widget_tag)
                 if widget_tag.name in NAMES.WIDGETS:
                     vbox.value.pack_start(obj.value, expand=True, fill=True, padding=0)
@@ -145,14 +156,14 @@ class ObjectAssembler:
         label.value = Gtk.Label()
 
         text = tag.text
-        print("tag.text = " + text)
+        #print("tag.text = " + text)
         if isinstance(label.value, Gtk.Label):
-            print("YES")
+            #print("YES")
             label.value.set_text(text)
 
         for tag in tag.children:
             if isinstance(tag, Tag):
-                print(tag.name)
+                #print(tag.name)
                 if tag.name in NAMES.UNIVERSAL:
                     pass
                 else:
@@ -164,12 +175,12 @@ class ObjectAssembler:
         button.value = Gtk.Button()
 
         onclick_str = GLOB.get_attribute(tag, "onclick")
-        print("> > " + str(onclick_str))
+        #print("> > " + str(onclick_str))
 
         text = tag.text
-        print("tag.text = " + text)
+        #print("tag.text = " + text)
         if isinstance(button.value, Gtk.Button):
-            print("YES")
+            #print("YES")
             button.value.set_label(text)
 
         if onclick_str is not None:
@@ -189,18 +200,62 @@ class ObjectAssembler:
         entry.value = Gtk.Entry()
 
         text = tag.text
-        print("tag.text = " + text)
+        #print("tag.text = " + text)
         if isinstance(entry.value, Gtk.Entry):
-            print("YES")
+            #print("YES")
             entry.value.set_text(text)
 
         for tag in tag.children:
             if isinstance(tag, Tag):
-                print(tag.name)
+                #print(tag.name)
                 if tag.name in NAMES.UNIVERSAL:
                     pass
                 else:
                     raise GtkmlException("Invalid child!")
         return entry
 
+    def _get_appmenu(self, tag):
+        appmenu = OBJ.AppMenu()
+        menubar_gtk = Gtk.MenuBar()
+
+        appmenu.value = menubar_gtk
+
+
+        if isinstance(menubar_gtk, Gtk.MenuBar):
+            print("ASD")
+            for item in tag.children:
+                #print("Menu item" + str(item))
+                obj = self.get_object(item)
+                #print(">>> " + str(obj.value.get_label()))
+                name = item.name
+                #print(name)
+                if name == "submenu":
+                    #print("SUBMENU:" + str(obj))
+                    appmenu.value.append(obj.value)
+        return appmenu
+
+    def _get_submenu(self, tag):
+        submenu = OBJ.AppSubMenu()
+        menuitem_gtk = Gtk.MenuItem(tag.attributes["title"])
+        menu = Gtk.Menu()
+        has_child = False
+
+        if isinstance(menuitem_gtk, Gtk.MenuItem):
+            for menuitem in tag.children:
+                has_child = True
+                obj = self.get_object(menuitem)
+                if menuitem.name == "menu-item":
+                    menu.add(obj.value)
+
+        if has_child:
+            menuitem_gtk.set_submenu(menu)
+        submenu.value = menuitem_gtk
+
+        return submenu
+
+    def _get_menu_item(self, tag):
+        menuitem = OBJ.AppMenuItem()
+        menuitem_gtk = Gtk.MenuItem(tag.attributes["title"])
+        menuitem.value = menuitem_gtk
+        return menuitem
 

@@ -1,8 +1,10 @@
 from gtkml.gtkml.static.names import BUILTIN_NAMES, USER_NAMES
 from gtkml.gtkml.tag import Tag
-from gtkml.gtkml_runtime.execute.assembler import ObjectAssembler
-#from gtkml.gtkml_runtime.gtkml_runtime import RUNTIME
-from gtkml.gtkml_runtime.object_pool import OBJECT_POOL
+from gtkml.runtime.execute.assembler import ObjectAssembler
+#from gtkml.runtime.runtime import RUNTIME
+from gtkml.runtime.object_pool import OBJECT_POOL
+
+from gtkml.runtime.execute.assembler import VAR
 
 
 class ObjectBuilder:
