@@ -44,7 +44,7 @@ def fill():
 ----------------------
 
 Working example:
-<img src="https://github.com/ThomasKenyeres/GTKML-GTK-Markup-Language-/blob/baf20268f5dabac5528b9ed19cd6f762c21b2afb/img/gtkml-labels.png">
+<img src="https://github.com/ThomasKenyeres/GTKML-GTK-Markup-Language-/blob/6cdf37e2e546cd663ab051fb5a26b3c8d5c861f8/img/gtkml-appmenu-1.png">
 
 
 Further features to be implemented(later)
