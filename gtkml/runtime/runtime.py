@@ -1,5 +1,5 @@
-from gtkml.runtime.execute.executor import Executor
-from gtkml.runtime.object_pool import ObjectPool
+from gtkml.gtkml_runtime.execute.executor import Executor
+from gtkml.gtkml_runtime.object_pool import ObjectPool
 from gtkml.parser.parser import DOMParser
 
 class GtkmlRuntime:

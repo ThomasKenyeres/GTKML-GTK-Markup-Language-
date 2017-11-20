@@ -2,12 +2,12 @@ import gi
 
 from gtkml.gtkml.tag_frame_objects import Application
 from gtkml.gtkml.tag import Tag
-#from gtkml.runtime.real_runtime import RUNTIME
+#from gtkml.gtkml_runtime.real_runtime import RUNTIME
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
-from gtkml.runtime.execute.object_builder import ObjectBuilder
+from gtkml.gtkml_runtime.execute.object_builder import ObjectBuilder
 
 
 class Executor():
