@@ -1,4 +1,5 @@
 import gtkml.gtkml.abstractions as abstr
+import gtkml.runtime.runtime_variables as VAR
 from gtkml.tools.reference import REF
 
 
@@ -7,6 +8,8 @@ class GtkmlObject:
 
 class AbsWidget(GtkmlObject, abstr.Sizeable, abstr.SelfSizeable):
     def __init__(self):
+        abstr.Sizeable.__init__(self)
+        abstr.SelfSizeable.__init__(self)
         self.__value = None
         self.__visible = True
 
@@ -121,9 +124,28 @@ class AbsPython(GtkmlObject):
     def __init__(self):
         super()
         self.__src = None
+        self.__pysrc = ""
+
+    def get_src(self):
+        return self.__src
+
+    src = property(get_src)
+
+    @src.setter
+    def src(self, val):
+        self.__src = val
 
     def execute(self):
-        pass
+        eval(self.__pysrc)
+
+    def load(self):
+        homedir = VAR.START_DIR
+        python_src = ""
+        with open(str(homedir) + "/" + str(self.__src)) as pyfile:
+            for line in pyfile:
+                python_src += line
+        self.__pysrc = python_src
+
 
 class AbsImport(GtkmlObject):
     def __init__(self):
