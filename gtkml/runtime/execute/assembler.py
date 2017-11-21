@@ -116,7 +116,10 @@ class ObjectAssembler:
                 obj = self.get_object(widget_tag)
                 if widget_tag.name in NAMES.WIDGETS:
                     #print(">>>" + str(widget_tag.name))
-                    body.value.pack_start(obj.value, expand=True, fill=True, padding=0)
+                    expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
+                    fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
+                    padding = GLOB.get_str_num_attribute(widget_tag, "padding")
+                    body.value.pack_start(obj.value, expand=expand, fill=fill, padding=padding)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     body.append(obj)
                 elif widget_tag.name == "appmenu":
@@ -134,7 +137,9 @@ class ObjectAssembler:
                 obj = self.get_object(widget_tag)
                 if widget_tag.name in NAMES.WIDGETS:
                     expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
-                    hbox.value.pack_start(obj.value, expand=expand, fill=True, padding=0)
+                    fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
+                    padding = GLOB.get_str_num_attribute(widget_tag, "padding")
+                    hbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=padding)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     hbox.append(obj)
         return hbox
@@ -149,7 +154,9 @@ class ObjectAssembler:
                 obj = self.get_object(widget_tag)
                 if widget_tag.name in NAMES.WIDGETS:
                     expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
-                    vbox.value.pack_start(obj.value, expand=expand, fill=True, padding=0)
+                    fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
+                    padding = GLOB.get_str_num_attribute(widget_tag, "padding")
+                    vbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=padding)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     vbox.append(obj)
         return vbox
