@@ -2,6 +2,8 @@ import gtkml.gtkml.abstractions as abstr
 import gtkml.runtime.runtime_variables as VAR
 from gtkml.tools.reference import REF
 
+import gtkml.gtkml.stdlib.gtk_query as Q
+_ = Q._
 
 class GtkmlObject:
     pass
@@ -136,7 +138,7 @@ class AbsPython(GtkmlObject):
         self.__src = val
 
     def execute(self):
-        eval(self.__pysrc)
+        exec(self.__pysrc)
 
     def load(self):
         homedir = VAR.START_DIR
