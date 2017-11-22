@@ -16,13 +16,20 @@ class ObjectPool:
 
     @property
     def pool(self):
-        return REF(self.__dict__, "_ObjectPool__pool")
+        return REF(self.__dict__, "_pool")
 
     def get(self, selector, val):
         if selector is "id":
-            return REF(self._pool, val)
+            return REF(REF(self._pool, val), "obj")
 
     def classes_of(self, id):
         return self._pool[id]["class"]
 
 OBJECT_POOL = ObjectPool()
+
+#TESTS
+if __name__ == '__main__':
+    from gtkml.gtkml.tag_frame_objects import Window
+    OBJECT_POOL.set_object("window1", Window(), ["cls1", "cls2"])
+    a = OBJECT_POOL.get("id", "window1")
+    print(a)
