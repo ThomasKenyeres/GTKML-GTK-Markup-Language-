@@ -12,12 +12,12 @@ class ObjectAccessor:
             if len(selector) > 1:
                 first = selector[0]
                 if first == "#":
-                    return self.__get_by_id(int(selector[1::]))
+                    return self.__get_by_id(selector[1::])
             else:
                 raise GtkmlException("Invalid selector")
 
     def __get_by_id(self, id):
-        pass
+        return OBJECT_POOL.get("id", id)
 
     def __get_by_class(self, class_):
         pass
@@ -26,5 +26,4 @@ class ObjectAccessor:
         pass
 
     def _get_all(self):
-        #print(OBJECT_POOL.__dict__)
         return OBJECT_POOL.pool

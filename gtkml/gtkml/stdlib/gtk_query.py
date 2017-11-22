@@ -11,7 +11,9 @@ class GtkQueryObject:
         self.accessor = ObjectAccessor()
 
     def __call__(self, *args, **kwargs):
-        return self.accessor._get_all()
+        #return self.accessor._get_all()
+        if len(args) == 1:
+            return self.accessor.get_object(args[0])
 
     def get(self, url):
         return self.http.GET(url)
