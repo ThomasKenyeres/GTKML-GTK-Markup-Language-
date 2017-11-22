@@ -18,7 +18,6 @@ def get_str_bool_attribute(tag, attr):
 
 def get_str_num_attribute(tag, attr):
     val = get_attribute(tag, attr)
-    print(val)
     try:
         return float(val)
     except ValueError:
