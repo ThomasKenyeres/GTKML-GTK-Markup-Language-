@@ -15,6 +15,10 @@ import gtkml.gtkml.static.names as NAMES
 
 import gtkml.runtime.runtime_variables as VAR
 
+_ = OBJ._
+
+from gtkml.runtime.object_pool import OBJECT_POOL
+
 class ObjectAssembler:
     def __init__(self):
         pass
@@ -41,6 +45,7 @@ class ObjectAssembler:
 
     def _get_application(self, tag):
         name = GLOB.get_attribute(tag, "name")
+        tagID = GLOB.get_attribute(tag, "id")
 
         components = []
         for component in tag.children:
@@ -52,6 +57,7 @@ class ObjectAssembler:
         app = OBJ.Application()
         app.name = name
         app.components = components
+        OBJECT_POOL.set_object(tagID, app, [])
         return app
 
     def _get_python(self, tag):
@@ -70,6 +76,8 @@ class ObjectAssembler:
         visible = GLOB.get_str_bool_attribute(tag, "show")
         width = GLOB.get_attribute(tag, "width")
         height = GLOB.get_attribute(tag, "height")
+
+        tagID = GLOB.get_attribute(tag, "id")
 
         window = OBJ.Window()
         win = Gtk.Window()
@@ -101,6 +109,7 @@ class ObjectAssembler:
         if visible: window.show()
         else: window.hide()
 
+        OBJECT_POOL.set_object(tagID, window, [])
         return window
 
     def _get_header(self, tag):
@@ -111,11 +120,12 @@ class ObjectAssembler:
         body.value = Gtk.VBox()
         body.children = []
 
+        tagID = GLOB.get_attribute(tag, "id")
+
         for widget_tag in tag.children:
             if isinstance(widget_tag, Tag):
                 obj = self.get_object(widget_tag)
                 if widget_tag.name in NAMES.WIDGETS:
-                    #print(">>>" + str(widget_tag.name))
                     expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
                     fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
                     padding = GLOB.get_str_num_attribute(widget_tag, "padding")
@@ -125,12 +135,15 @@ class ObjectAssembler:
                 elif widget_tag.name == "appmenu":
                     expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
                     body.value.pack_start(obj.value, expand=expand, fill=True, padding=0)
+        OBJECT_POOL.set_object(tagID, body, [])
         return body
 
     def _get_hbox(self, tag):
         hbox = OBJ.HBox()
         hbox.value = Gtk.HBox()
         hbox.children = []
+
+        tagID = GLOB.get_attribute(tag, "id")
 
         for widget_tag in tag.children:
             if isinstance(widget_tag, Tag):
@@ -142,12 +155,15 @@ class ObjectAssembler:
                     hbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=padding)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     hbox.append(obj)
+        OBJECT_POOL.set_object(tagID, hbox, "")
         return hbox
 
     def _get_vbox(self, tag):
         vbox = OBJ.VBox()
         vbox.value = Gtk.VBox()
         vbox.children = []
+
+        tagID = GLOB.get_attribute(tag, "id")
 
         for widget_tag in tag.children:
             if isinstance(widget_tag, Tag):
@@ -159,11 +175,14 @@ class ObjectAssembler:
                     vbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=padding)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     vbox.append(obj)
+        OBJECT_POOL.set_object(tagID, vbox, "")
         return vbox
 
     def _get_label(self, tag):
         label = OBJ.Label()
         label.value = Gtk.Label()
+
+        tagID = GLOB.get_attribute(tag, "id")
 
         text = tag.text
         if isinstance(label.value, Gtk.Label):
@@ -175,11 +194,14 @@ class ObjectAssembler:
                     pass
                 else:
                     raise GtkmlException("Invalid child!")
+        OBJECT_POOL.set_object(tagID, label, "")
         return label
 
     def _get_button(self, tag):
         button = OBJ.Button()
         button.value = Gtk.Button()
+
+        tagID = GLOB.get_attribute(tag, "id")
 
         onclick_str = GLOB.get_attribute(tag, "onclick")
 
@@ -197,11 +219,14 @@ class ObjectAssembler:
                     pass
                 else:
                     raise GtkmlException("Invalid child!")
+        OBJECT_POOL.set_object(tagID, button, [])
         return button
 
     def _get_entry(self, tag):
         entry = OBJ.Entry()
         entry.value = Gtk.Entry()
+
+        tagID = GLOB.get_attribute(tag, "id")
 
         text = tag.text
         if isinstance(entry.value, Gtk.Entry):
@@ -213,6 +238,7 @@ class ObjectAssembler:
                     pass
                 else:
                     raise GtkmlException("Invalid child!")
+        OBJECT_POOL.set_object(tagID, entry, [])
         return entry
 
     def _get_appmenu(self, tag):
@@ -221,6 +247,8 @@ class ObjectAssembler:
 
         appmenu.value = menubar_gtk
 
+        tagID = GLOB.get_attribute(tag, "id")
+
         if isinstance(menubar_gtk, Gtk.MenuBar):
             print("ASD")
             for item in tag.children:
@@ -228,6 +256,7 @@ class ObjectAssembler:
                 name = item.name
                 if name == "submenu":
                     appmenu.value.append(obj.value)
+        OBJECT_POOL.set_object(tagID, appmenu, [])
         return appmenu
 
     def _get_submenu(self, tag):
@@ -235,6 +264,8 @@ class ObjectAssembler:
         menuitem_gtk = Gtk.MenuItem(GLOB.get_attribute(tag, "title"))
         menu = Gtk.Menu()
         has_child = False
+
+        tagID = GLOB.get_attribute(tag, "id")
 
         if isinstance(menuitem_gtk, Gtk.MenuItem):
             for menuitem in tag.children:
@@ -247,11 +278,16 @@ class ObjectAssembler:
             menuitem_gtk.set_submenu(menu)
         submenu.value = menuitem_gtk
 
+        OBJECT_POOL.set_object(tagID, submenu, [])
         return submenu
 
     def _get_menu_item(self, tag):
         menuitem = OBJ.AppMenuItem()
         menuitem_gtk = Gtk.MenuItem(GLOB.get_attribute(tag, "title"))
         menuitem.value = menuitem_gtk
+
+        tagID = GLOB.get_attribute(tag, "id")
+        OBJECT_POOL.set_object(tagID, menuitem, [])
+
         return menuitem
 
