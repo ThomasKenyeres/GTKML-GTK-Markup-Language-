@@ -10,6 +10,7 @@ from gtkml.tools.frame_object_tools import is_layout_widget
 import gtkml.gtkml.object as GO
 from gtkml.tools.reference import REF
 
+_ = GO._
 
 class Widget(GO.AbsWidget):
     def __init__(self):
