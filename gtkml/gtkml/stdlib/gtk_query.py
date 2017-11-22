@@ -1,7 +1,7 @@
 
 
 from gtkml.gtkml.stdlib.http_service import HttpService
-from gtkml.gtkml.stdlib.object_accessor import ObjectAccessor
+from gtkml.gtkml.stdlib.object_accessor import ObjectAccessor, OBJECT_POOL
 
 
 
@@ -11,7 +11,7 @@ class GtkQueryObject:
         self.accessor = ObjectAccessor()
 
     def __call__(self, *args, **kwargs):
-        pass
+        return self.accessor._get_all()
 
     def get(self, url):
         return self.http.GET(url)

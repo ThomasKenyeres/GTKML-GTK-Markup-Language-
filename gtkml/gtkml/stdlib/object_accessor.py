@@ -1,4 +1,6 @@
 from gtkml.exception.gtmkl_exception import GtkmlException
+from gtkml.runtime.object_pool import OBJECT_POOL
+from gtkml.tools.reference import REF
 
 
 class ObjectAccessor:
@@ -22,3 +24,7 @@ class ObjectAccessor:
 
     def __get_by_tag(self, tag_name):
         pass
+
+    def _get_all(self):
+        #print(OBJECT_POOL.__dict__)
+        return OBJECT_POOL.pool
