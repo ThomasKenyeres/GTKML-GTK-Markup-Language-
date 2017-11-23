@@ -29,6 +29,7 @@ class ObjectPool:
         return self._pool[id]["class"]
 
 OBJECT_POOL = ObjectPool()
+ENVIRONMENT = globals()
 
 #TESTS
 if __name__ == '__main__':
