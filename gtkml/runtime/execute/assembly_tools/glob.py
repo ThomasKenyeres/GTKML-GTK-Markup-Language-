@@ -24,3 +24,9 @@ def get_str_num_attribute(tag, attr):
         return 0
     except TypeError:
         return 0
+
+def numbers_are_0(*nums):
+    for n in nums:
+        if n != 0:
+            return False
+    return True
