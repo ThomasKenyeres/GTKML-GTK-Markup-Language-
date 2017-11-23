@@ -1,5 +1,6 @@
 import gtkml.gtkml.abstractions as abstr
 import gtkml.runtime.runtime_variables as VAR
+from gtkml.runtime.object_pool import ENVIRONMENT
 from gtkml.tools.reference import REF
 
 import gtkml.gtkml.stdlib.gtk_query as Q
@@ -97,6 +98,7 @@ class AbsWindow(AbsWidget):
 
     @title.setter
     def title(self, val):
+        self.value.set_title(val)
         self.__title = val
 
     @property
@@ -138,7 +140,7 @@ class AbsPython(GtkmlObject):
         self.__src = val
 
     def execute(self):
-        exec(self.__pysrc)
+        exec(self.__pysrc, globals(), ENVIRONMENT)
 
     def load(self):
         homedir = VAR.START_DIR
@@ -232,12 +234,11 @@ class AbsButtonWidget(AbsWidget, abstr.TextedWidget):
 
     @property
     def onclick(self):
-        return REF(self.__dict__, "_AbsButtonWidget__onclick")
+        pass
 
     @onclick.setter
     def onclick(self, val):
-        self.__onclick = val
-
+        pass
 
 #BUTTONS
 
