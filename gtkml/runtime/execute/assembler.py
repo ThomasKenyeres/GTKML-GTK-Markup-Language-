@@ -19,6 +19,9 @@ _ = OBJ._
 
 from gtkml.runtime.object_pool import OBJECT_POOL
 
+from gtkml.gtkml.tag_frame_objects import ENVIRONMENT
+
+
 class ObjectAssembler:
     def __init__(self):
         pass
@@ -202,7 +205,6 @@ class ObjectAssembler:
         button.value = Gtk.Button()
 
         tagID = GLOB.get_attribute(tag, "id")
-
         onclick_str = GLOB.get_attribute(tag, "onclick")
 
         text = tag.text
@@ -210,7 +212,8 @@ class ObjectAssembler:
             button.value.set_label(text)
 
         if onclick_str is not None:
-            button.onclick = globals()[onclick_str]
+            print(onclick_str)
+            button.onclick = ENVIRONMENT[onclick_str]
 
         for tag in tag.children:
             if isinstance(tag, Tag):
