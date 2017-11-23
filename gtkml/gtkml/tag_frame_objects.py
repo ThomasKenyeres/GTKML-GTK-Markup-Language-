@@ -4,11 +4,10 @@ from gi.repository import Gtk
 
 from gtkml.tools.frame_object_tools import is_layout_widget
 
-
-#from gi.repository import Gdk, Gtk, Gio
-
 import gtkml.gtkml.object as GO
 from gtkml.tools.reference import REF
+
+from gtkml.runtime.object_pool import ENVIRONMENT
 
 _ = GO._
 
@@ -149,7 +148,24 @@ class ButtonWidget(GO.AbsButtonWidget):
 #BUTTONS
 
 class Button(GO.AbsButton):
-    pass
+    def __init__(self):
+        GO.AbsButton.__init__(self)
+
+    @property
+    def onclick(self):
+        return REF(self.__dict__, "_AbsButtonWidget__onclick")
+
+    @onclick.setter
+    def onclick(self, val):
+        exec_assign = "self." + str(val.__name__) \
+                      + " = ENVIRONMENT['" + str(val.__name__) + "']"
+
+        exec_set_onclick = "self.value.connect('clicked', self." + \
+                           str(val.__name__) + ")"
+
+        exec(exec_assign)
+        exec(exec_set_onclick)
+        self.__onclick = val
 
 class Check(GO.AbsCheck):
     pass
