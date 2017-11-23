@@ -3,8 +3,12 @@ doc_notes/*
 
 #Examples in root dir
 example*
+*try.py
 
 #Compiled
 *__pycache__*
-*.pyc
+*cpython*
 
+
+.idea
+build
