@@ -37,6 +37,7 @@ class ObjectAssembler:
 
         if name == "hbox": return self._get_hbox(tag)
         if name == "vbox": return self._get_vbox(tag)
+        if name == "grid": return self._get_grid(tag)
 
         if name == "label": return self._get_label(tag)
         if name == "button": return self._get_button(tag)
@@ -180,6 +181,39 @@ class ObjectAssembler:
                     vbox.append(obj)
         OBJECT_POOL.set_object(tagID, vbox, "")
         return vbox
+
+    def _get_grid(self, tag):
+        grid = OBJ.Grid()
+        grid.value = Gtk.Grid()
+        grid.children = []
+
+        tagID = GLOB.get_attribute(tag, "id")
+
+        i = 0
+        for component in tag.children:
+            if isinstance(component, Tag):
+                obj = self.get_object(component)
+                if component.name in NAMES.WIDGETS:
+                    if i == 0:
+                        grid.value.add(obj.value)
+                    else:
+                        left = GLOB.get_str_num_attribute(component, "left")
+                        top = GLOB.get_str_num_attribute(component, "top")
+                        right = GLOB.get_str_num_attribute(component, "right")
+                        bottom = GLOB.get_str_num_attribute(component, "bottom")
+                        width = right - left
+                        height = bottom - top
+                        if GLOB.numbers_are_0(left, top, width, height, right, bottom):
+                            grid.value.add(obj.value)
+                        else:
+                            print("{}, {}, {}, {}".format(left, top, width, height))
+                            grid.value.attach(child=obj.value, left=left, top=top,
+                                          width=width, height=height)
+                elif component.name in NAMES.UNIVERSAL:
+                    grid.append(obj)
+            i += 1
+        OBJECT_POOL.set_object(tagID, grid, [])
+        return grid
 
     def _get_label(self, tag):
         label = OBJ.Label()
