@@ -8,7 +8,15 @@ Planned features (in first release)
 * Python script integration (similar to JavaScript integration in HTML)
 * Builtin python libraries for e.g.: HTTP requests, jQuery-like feature etc.
 
-#####Sample:
+####Run your application(source):
+```sh
+python3 <directory where GTKML is unpacked\>/gtkml/runtime/main.py <your application's xml\>
+```
+
+
+
+
+####Sample:
 app.xml
 ```xml
 <application>
