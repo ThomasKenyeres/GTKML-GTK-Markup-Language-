@@ -141,6 +141,7 @@ class AbsPython(GtkmlObject):
 
     def execute(self):
         exec(self.__pysrc, globals(), ENVIRONMENT)
+        globals().update(ENVIRONMENT)
 
     def load(self):
         homedir = VAR.START_DIR
