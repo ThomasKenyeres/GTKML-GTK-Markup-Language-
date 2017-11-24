@@ -132,8 +132,8 @@ class ObjectAssembler:
                 if widget_tag.name in NAMES.WIDGETS:
                     expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
                     fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
-                    padding = GLOB.get_str_num_attribute(widget_tag, "padding")
-                    body.value.pack_start(obj.value, expand=expand, fill=fill, padding=padding)
+                    margin = GLOB.get_str_num_attribute(widget_tag, Sizes.MARGIN)
+                    body.value.pack_start(obj.value, expand=expand, fill=fill, padding=margin)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     body.append(obj)
                 elif widget_tag.name == "appmenu":
@@ -155,8 +155,8 @@ class ObjectAssembler:
                 if widget_tag.name in NAMES.WIDGETS:
                     expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
                     fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
-                    padding = GLOB.get_str_num_attribute(widget_tag, "padding")
-                    hbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=padding)
+                    margin = GLOB.get_str_num_attribute(widget_tag, Sizes.MARGIN)
+                    hbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=margin)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     hbox.append(obj)
         OBJECT_POOL.set_object(tagID, hbox, "")
@@ -175,8 +175,8 @@ class ObjectAssembler:
                 if widget_tag.name in NAMES.WIDGETS:
                     expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
                     fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
-                    padding = GLOB.get_str_num_attribute(widget_tag, "padding")
-                    vbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=padding)
+                    margin = GLOB.get_str_num_attribute(widget_tag, Sizes.MARGIN)
+                    vbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=margin)
                 elif widget_tag.name in NAMES.UNIVERSAL:
                     vbox.append(obj)
         OBJECT_POOL.set_object(tagID, vbox, "")
