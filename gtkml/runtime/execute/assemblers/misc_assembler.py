@@ -1,0 +1,2 @@
+class MiscellaneousAssembler():
+    pass
