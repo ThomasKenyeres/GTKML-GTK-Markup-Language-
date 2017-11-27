@@ -21,10 +21,16 @@ from gtkml.runtime.object_pool import OBJECT_POOL
 
 from gtkml.gtkml.tag_frame_objects import ENVIRONMENT
 
+import gtkml.runtime.execute.assemblers.layout_assembler as LAY_ASMBLR
+import gtkml.runtime.execute.assemblers.misc_assembler as MISC_ASMBLR
+import gtkml.runtime.execute.assemblers.std_widget_assembler as WIDGET_ASMBLR
+
 
 class ObjectAssembler:
     def __init__(self):
-        pass
+        self.layout_a = LAY_ASMBLR.LayoutAssembler(self)
+        self.misc_a = None
+        self.widget_a = None
 
     def get_object(self, tag):
         name = tag.name
