@@ -24,13 +24,16 @@ from gtkml.gtkml.tag_frame_objects import ENVIRONMENT
 import gtkml.runtime.execute.assemblers.layout_assembler as LAY_ASMBLR
 import gtkml.runtime.execute.assemblers.misc_assembler as MISC_ASMBLR
 import gtkml.runtime.execute.assemblers.std_widget_assembler as WIDGET_ASMBLR
+import gtkml.runtime.execute.assemblers.appmenu_assembler as APPMENU_ASMBLR
+
 
 
 class ObjectAssembler:
     def __init__(self):
         self.layout_a = LAY_ASMBLR.LayoutAssembler(self)
-        self.misc_a = None
-        self.widget_a = None
+        self.misc_a = MISC_ASMBLR.MiscellaneousAssembler(self)
+        self.widget_a = WIDGET_ASMBLR.StandardWidgetAssembler(self)
+        self.menu_a = APPMENU_ASMBLR.AppMenuAssembler(self)
 
     def get_object(self, tag):
         name = tag.name
@@ -54,283 +57,44 @@ class ObjectAssembler:
         if name == "menu-item": return self._get_menu_item(tag)
 
     def _get_application(self, tag):
-        name = GLOB.get_attribute(tag, "name")
-        tagID = GLOB.get_attribute(tag, "id")
-
-        components = []
-        for component in tag.children:
-            if isinstance(component, Tag):
-                if component.name not in NAMES.APPLICATION_CHILDREN:
-                    raise GtkmlException("Invalid child")
-            components.append(self.get_object(component))
-
-        app = OBJ.Application()
-        app.name = name
-        app.components = components
-        OBJECT_POOL.set_object(tagID, app, [])
-        return app
+        return self.misc_a.get_application(tag)
 
     def _get_python(self, tag):
-        python = OBJ.Python()
-        src = GLOB.get_attribute(tag, "src")
-        python.src = str(src)
-        print(src)
-        print(python.src)
-        g = python.src
-        #print(g)
-        python.load()
-        python.execute()
+        return self.misc_a.get_python(tag)
 
     def _get_window(self, tag):
-        title = GLOB.get_attribute(tag, "title")
-        visible = GLOB.get_str_bool_attribute(tag, "show")
-        width = GLOB.get_attribute(tag, "width")
-        height = GLOB.get_attribute(tag, "height")
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        window = OBJ.Window()
-        win = Gtk.Window()
-        win.connect("delete-event", Gtk.main_quit)
-
-        window.body = OBJ.Body()
-        window.body.children = []
-        window.body.value = Gtk.VBox()
-
-        window.value = win
-
-        children = []
-        for component in tag.children:
-            if isinstance(component, Tag):
-                if component.name not in NAMES.WINDOW_CHILDREN:
-                    raise GtkmlException("Invalid child")
-                elif component.name == "body":
-                    window.body = self._get_body(component)
-                    window.value.add(window.body.value)
-                elif component.name == "appmenu":
-                    window.value.add(self.get_object(component).value)
-
-        if title is not None: win.set_title(title)
-        else: win.set_title("")
-
-        if height is not None and width is not None:
-            win.set_size_request(int(width), int(height))
-
-        if visible: window.show()
-        else: window.hide()
-
-        OBJECT_POOL.set_object(tagID, window, [])
-        return window
+        return self.layout_a.get_window(tag)
 
     def _get_header(self, tag):
         pass
 
     def _get_body(self, tag):
-        body = OBJ.Body()
-        body.value = Gtk.VBox()
-        body.children = []
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        for widget_tag in tag.children:
-            if isinstance(widget_tag, Tag):
-                obj = self.get_object(widget_tag)
-                if widget_tag.name in NAMES.WIDGETS:
-                    expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
-                    fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
-                    margin = GLOB.get_str_num_attribute(widget_tag, Sizes.MARGIN)
-                    body.value.pack_start(obj.value, expand=expand, fill=fill, padding=margin)
-                elif widget_tag.name in NAMES.UNIVERSAL:
-                    body.append(obj)
-                elif widget_tag.name == "appmenu":
-                    expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
-                    body.value.pack_start(obj.value, expand=expand, fill=True, padding=0)
-        OBJECT_POOL.set_object(tagID, body, [])
-        return body
+        return self.layout_a.get_body(tag)
 
     def _get_hbox(self, tag):
-        hbox = OBJ.HBox()
-        hbox.value = Gtk.HBox()
-        hbox.children = []
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        for widget_tag in tag.children:
-            if isinstance(widget_tag, Tag):
-                obj = self.get_object(widget_tag)
-                if widget_tag.name in NAMES.WIDGETS:
-                    expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
-                    fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
-                    margin = GLOB.get_str_num_attribute(widget_tag, Sizes.MARGIN)
-                    hbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=margin)
-                elif widget_tag.name in NAMES.UNIVERSAL:
-                    hbox.append(obj)
-        OBJECT_POOL.set_object(tagID, hbox, "")
-        return hbox
+        return self.layout_a.get_hbox(tag)
 
     def _get_vbox(self, tag):
-        vbox = OBJ.VBox()
-        vbox.value = Gtk.VBox()
-        vbox.children = []
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        for widget_tag in tag.children:
-            if isinstance(widget_tag, Tag):
-                obj = self.get_object(widget_tag)
-                if widget_tag.name in NAMES.WIDGETS:
-                    expand = GLOB.get_str_bool_attribute(widget_tag, Sizes.EXPAND)
-                    fill = GLOB.get_str_bool_attribute(widget_tag, Sizes.FILL)
-                    margin = GLOB.get_str_num_attribute(widget_tag, Sizes.MARGIN)
-                    vbox.value.pack_start(obj.value, expand=expand, fill=fill, padding=margin)
-                elif widget_tag.name in NAMES.UNIVERSAL:
-                    vbox.append(obj)
-        OBJECT_POOL.set_object(tagID, vbox, "")
-        return vbox
+        return self.layout_a.get_vbox(tag)
 
     def _get_grid(self, tag):
-        grid = OBJ.Grid()
-        grid.value = Gtk.Grid()
-        grid.children = []
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        i = 0
-        for component in tag.children:
-            if isinstance(component, Tag):
-                obj = self.get_object(component)
-                if component.name in NAMES.WIDGETS:
-                    if i == 0:
-                        grid.value.add(obj.value)
-                    else:
-                        left = GLOB.get_str_num_attribute(component, "left")
-                        top = GLOB.get_str_num_attribute(component, "top")
-                        right = GLOB.get_str_num_attribute(component, "right")
-                        bottom = GLOB.get_str_num_attribute(component, "bottom")
-                        width = right - left
-                        height = bottom - top
-                        if GLOB.numbers_are_0(left, top, width, height, right, bottom):
-                            grid.value.add(obj.value)
-                        else:
-                            print("{}, {}, {}, {}".format(left, top, width, height))
-                            grid.value.attach(child=obj.value, left=left, top=top,
-                                          width=width, height=height)
-                elif component.name in NAMES.UNIVERSAL:
-                    grid.append(obj)
-            i += 1
-        OBJECT_POOL.set_object(tagID, grid, [])
-        return grid
+        return self.layout_a.get_grid(tag)
 
     def _get_label(self, tag):
-        label = OBJ.Label()
-        label.value = Gtk.Label()
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        text = tag.text
-        if isinstance(label.value, Gtk.Label):
-            label.value.set_text(text)
-
-        for tag in tag.children:
-            if isinstance(tag, Tag):
-                if tag.name in NAMES.UNIVERSAL:
-                    pass
-                else:
-                    raise GtkmlException("Invalid child!")
-        OBJECT_POOL.set_object(tagID, label, "")
-        return label
+        return self.widget_a.get_label(tag)
 
     def _get_button(self, tag):
-        button = OBJ.Button()
-        button.value = Gtk.Button()
-
-        tagID = GLOB.get_attribute(tag, "id")
-        onclick_str = GLOB.get_attribute(tag, "onclick")
-
-        text = tag.text
-        if isinstance(button.value, Gtk.Button):
-            button.value.set_label(text)
-
-        if onclick_str is not None:
-            print(onclick_str)
-            button.onclick = ENVIRONMENT[onclick_str]
-
-        for tag in tag.children:
-            if isinstance(tag, Tag):
-                print(tag.name)
-                if tag.name in NAMES.UNIVERSAL:
-                    pass
-                else:
-                    raise GtkmlException("Invalid child!")
-        OBJECT_POOL.set_object(tagID, button, [])
-        return button
+        return self.widget_a.get_button(tag)
 
     def _get_entry(self, tag):
-        entry = OBJ.Entry()
-        entry.value = Gtk.Entry()
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        text = tag.text
-        if isinstance(entry.value, Gtk.Entry):
-            entry.value.set_text(text)
-
-        for tag in tag.children:
-            if isinstance(tag, Tag):
-                if tag.name in NAMES.UNIVERSAL:
-                    pass
-                else:
-                    raise GtkmlException("Invalid child!")
-        OBJECT_POOL.set_object(tagID, entry, [])
-        return entry
+        return self.widget_a.get_entry(tag)
 
     def _get_appmenu(self, tag):
-        appmenu = OBJ.AppMenu()
-        menubar_gtk = Gtk.MenuBar()
-
-        appmenu.value = menubar_gtk
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        if isinstance(menubar_gtk, Gtk.MenuBar):
-            print("ASD")
-            for item in tag.children:
-                obj = self.get_object(item)
-                name = item.name
-                if name == "submenu":
-                    appmenu.value.append(obj.value)
-        OBJECT_POOL.set_object(tagID, appmenu, [])
-        return appmenu
+        return self.menu_a.get_appmenu(tag)
 
     def _get_submenu(self, tag):
-        submenu = OBJ.AppSubMenu()
-        menuitem_gtk = Gtk.MenuItem(GLOB.get_attribute(tag, "title"))
-        menu = Gtk.Menu()
-        has_child = False
-
-        tagID = GLOB.get_attribute(tag, "id")
-
-        if isinstance(menuitem_gtk, Gtk.MenuItem):
-            for menuitem in tag.children:
-                has_child = True
-                obj = self.get_object(menuitem)
-                if menuitem.name == "menu-item":
-                    menu.add(obj.value)
-
-        if has_child:
-            menuitem_gtk.set_submenu(menu)
-        submenu.value = menuitem_gtk
-
-        OBJECT_POOL.set_object(tagID, submenu, [])
-        return submenu
+        return self.menu_a.get_submenu(tag)
 
     def _get_menu_item(self, tag):
-        menuitem = OBJ.AppMenuItem()
-        menuitem_gtk = Gtk.MenuItem(GLOB.get_attribute(tag, "title"))
-        menuitem.value = menuitem_gtk
-
-        tagID = GLOB.get_attribute(tag, "id")
-        OBJECT_POOL.set_object(tagID, menuitem, [])
-
-        return menuitem
+        return self.menu_a.get_menu_item(tag)
 
