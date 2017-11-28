@@ -42,6 +42,5 @@ class MiscellaneousAssembler():
         print(src)
         print(python.src)
         g = python.src
-        # print(g)
         python.load()
         python.execute()

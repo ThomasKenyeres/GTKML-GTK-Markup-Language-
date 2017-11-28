@@ -39,8 +39,6 @@ class LayoutAssembler():
         children = []
         for component in tag.children:
             if isinstance(component, Tag):
-                print(">>> " + str(component.name))
-                print(NAMES.WINDOW_CHILDREN)
                 if component.name not in NAMES.WINDOW_CHILDREN:
                     raise GtkmlException("Invalid child: {} cannot be embedded into {}".format(
                         component.name, tag.name
