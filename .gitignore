@@ -12,3 +12,7 @@ example*
 
 .idea
 build
+dist
+
+#Pyz
+pyz*
