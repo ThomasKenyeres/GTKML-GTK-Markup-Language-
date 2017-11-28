@@ -10,17 +10,3 @@ class DOMParser:
         tag = Tag(root.tag)
         tag.parse(xml)
         return tag
-
-if __name__ == '__main__':
-    parser = DOMParser()
-    xml = """
-        <window>
-            <meta>metadatas</meta>
-            <header id="header1">
-                <title>WINDOW</title>
-            </header>
-        </window>
-    """
-
-    p = parser.parse(xml)
-    print(p.get_gtkml())
