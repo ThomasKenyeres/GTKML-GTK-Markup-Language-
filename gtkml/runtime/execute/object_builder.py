@@ -21,5 +21,4 @@ class ObjectBuilder:
         name = tag.name
         if name in BUILTIN_NAMES or name in USER_NAMES:
             return self._get(tag)
-        print(str(name))
         return None
